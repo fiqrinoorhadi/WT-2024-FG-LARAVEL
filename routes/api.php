@@ -13,6 +13,6 @@ Route::post('/v1/auth/register',[AuthenticationController::class, 'register']);
 Route::post('/v1/auth/login',[AuthenticationController::class, 'login']);
 Route::post('/v1/auth/logout',[AuthenticationController::class, 'logout'])->middleware(['auth:sanctum']);
 
-Route::post('/v1/post',[PostController::class, 'store'])->middleware(['auth:sanctum']);
-Route::delete('/v1/post/{id}',[PostController::class, 'destroy'])->middleware(['auth:sanctum', 'pemilik-postingan']);
+Route::post('/v1/posts',[PostController::class, 'store'])->middleware(['auth:sanctum']);
+Route::delete('/v1/posts/{id}',[PostController::class, 'destroy'])->middleware(['auth:sanctum', 'pemilik-postingan']);
 Route::get('/v1/posts',[PostController::class, 'index'])->middleware(['auth:sanctum']);
