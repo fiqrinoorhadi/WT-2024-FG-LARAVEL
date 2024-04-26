@@ -55,4 +55,15 @@ class PostController extends Controller
             'message'   => 'Delete post success'
         ], 204);
     }
+
+    public function index()
+    {
+        $posts = Post::all();
+
+        return response()->json([
+            'page'  => 0,
+            'size'  => 10,
+            'post'  => $posts
+        ]);
+    }
 }
