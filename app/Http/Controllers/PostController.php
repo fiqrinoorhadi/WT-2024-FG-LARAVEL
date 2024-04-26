@@ -47,7 +47,12 @@ class PostController extends Controller
         ], 201);        
     }
 
-    public function destroy(){
-        
+    public function destroy($id){
+        $post = Post::findOrFail($id);
+        $post->delete();
+
+        return response()->json([
+            'message'   => 'Delete post success'
+        ], 204);
     }
 }
