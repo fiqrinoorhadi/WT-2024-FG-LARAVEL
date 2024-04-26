@@ -58,12 +58,37 @@ class PostController extends Controller
 
     public function index()
     {
-        $posts = Post::all();
+        // Get posts with user and attachments eager loaded
+        $posts = Post::with('user', 'postAttachment')->get();
+        // Transform the data to match the desired structure
+    $transformedPosts = $posts->map(function ($post) {
+        return [
+            'id' => $post->id,
+            'caption' => $post->caption,
+            'created_at' => $post->created_at,
+            'deleted_at' => $post->deleted_at,
+            'user' => [
+                'id' => $post->user->id,
+                'full_name' => $post->user->full_name,
+                'username' => $post->user->username,
+                'bio' => $post->user->bio,
+                'is_private' => $post->user->is_private,
+                'created_at' => $post->user->created_at,
+            ],
+            'Attachment' => $post->postAttachment->map(function ($attachment) {
+                return [
+                    'id' => $attachment->id,
+                    'storage_path' => $attachment->storage_path,
+                ];
+            }),
+        ];
+    });
 
-        return response()->json([
-            'page'  => 0,
-            'size'  => 10,
-            'post'  => $posts
-        ]);
+    // Return the transformed data as JSON response
+    return response()->json([
+        'page' => 0,
+        'size' => $transformedPosts->count(),
+        'posts' => $transformedPosts,
+    ]);
     }
 }

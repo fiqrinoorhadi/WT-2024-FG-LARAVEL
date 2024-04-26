@@ -18,6 +18,6 @@ class Post extends Model
 
     public function postAttachment()
     {
-        return $this->hasOne(PostAttachment::class);
+        return $this->hasMany(PostAttachment::class);
     }
 }
