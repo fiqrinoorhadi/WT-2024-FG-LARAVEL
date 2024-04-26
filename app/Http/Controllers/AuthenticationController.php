@@ -28,6 +28,7 @@ class AuthenticationController extends Controller
         }
 
         $request['password'] = Hash::make($request->password);
+
         $user = User::create($request->all());
         $token = $user->createToken('auth_token')->plainTextToken;
 

@@ -9,7 +9,8 @@ class PostAttachment extends Model
 {
     use HasFactory;
 
-    protected $guarder = ['id'];
+    protected $guarded = ['id'];
+    public $timestamps = false;
 
     public function post()
     {

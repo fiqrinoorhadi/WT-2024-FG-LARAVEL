@@ -13,9 +13,9 @@ return new class extends Migration
     {
         Schema::create('post_attachments', function (Blueprint $table) {
             $table->id();
-            $table->string('storage_patch');
+            $table->string('storage_path');
             $table->unsignedBigInteger('post_id');
-            $table->foreign('post_id')->references('id')->on('users');
+            $table->foreign('post_id')->references('id')->on('posts');
         });
     }
 
