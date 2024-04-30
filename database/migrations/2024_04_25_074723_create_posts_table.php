@@ -12,8 +12,11 @@ return new class extends Migration
         Schema::create('posts', function (Blueprint $table) {
             $table->id();
             $table->string('caption');
+
             $table->unsignedBigInteger('user_id');
-            $table->foreign('user_id')->references('id')->on('users');
+            $table->foreign('user_id')->references('id')->on('users')
+            ->onupdate('cascade')->onDelete('cascade');
+
             $table->timestamps();
         });
     }
