@@ -22,7 +22,8 @@ class DatabaseSeeder extends Seeder
         $this->call([
             UserSeeder::class,
             PostSeeder::class,
-            PostAttachmentSeeder::class
+            PostAttachmentSeeder::class,
+            FollowSeeder::class
         ]);
     }
 }

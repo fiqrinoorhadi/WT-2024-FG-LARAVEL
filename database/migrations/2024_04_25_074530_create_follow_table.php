@@ -14,6 +14,7 @@ return new class extends Migration
             $table->foreign('follower_id')->references('id')->on('users');
             $table->unsignedBigInteger('following_id');
             $table->foreign('following_id')->references('id')->on('users');
+            $table->boolean('is_accepted')->default(0);
             $table->timestamp('created_at');
         });
     }
