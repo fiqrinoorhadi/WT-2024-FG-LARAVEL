@@ -20,5 +20,10 @@ class PostSeeder extends Seeder
             'caption'   => 'Postingan milik Lulu',
             'user_id'   => 2,
         ]);
+
+        Post::create([
+            'caption'   => 'Postingan milik raysan',
+            'user_id'   => 3,
+        ]);
     }
 }

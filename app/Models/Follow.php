@@ -11,9 +11,15 @@ class Follow extends Model
 
     protected $table = "follow";
     protected $guarded = ['id'];
+    public $timestamps = false;
 
-    public function user()
+    public function userFollower()
     {
-        return $this->belongsTo(User::class);
+        return $this->belongsTo(User::class, 'follower_id');
+    }
+
+    public function userFollowing()
+    {
+        return $this->belongsTo(User::class, 'following_id');
     }
 }

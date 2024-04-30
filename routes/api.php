@@ -3,6 +3,7 @@
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\PostController;
+use App\Http\Controllers\FollowController;
 use App\Http\Controllers\AuthenticationController;
 
 // Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
@@ -15,4 +16,6 @@ Route::post('/v1/auth/logout',[AuthenticationController::class, 'logout'])->midd
 
 Route::post('/v1/posts',[PostController::class, 'store'])->middleware(['auth:sanctum']);
 Route::delete('/v1/posts/{id}',[PostController::class, 'destroy'])->middleware(['auth:sanctum', 'pemilik-postingan']);
-Route::get('/v1/posts',[PostController::class, 'index'])->middleware(['auth:sanctum']);
+Route::get('/v1/posts/',[PostController::class, 'index'])->middleware(['auth:sanctum']);
+
+Route::post('/v1/{username}/following',[FollowController::class, 'index'])->middleware(['auth:sanctum']);

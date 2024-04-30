@@ -56,11 +56,33 @@ class PostController extends Controller
         ], 204);
     }
 
-    public function index()
-    {
-        // Get posts with user and attachments eager loaded
-        $posts = Post::with('user', 'postAttachment')->get();
-        // Transform the data to match the desired structure
+    public function index(Request $request)
+{
+    // Validate page and size parameters
+    $validator = Validator::make($request->all(), [
+        'page' => 'nullable|integer|min:0',
+        'size' => 'nullable|integer|min:1',
+    ]);
+
+    // Check if validation fails
+    if ($validator->fails()) {
+        return response()->json([
+            'message' => 'Invalid field',
+            'errors' => $validator->errors(),
+        ], 422);
+    }
+
+    // Retrieve validated page and size parameters
+    $page = $validatedData['page'] ?? 0; // Default to 0 if not provided
+    $size = $validatedData['size'] ?? 10; // Default to 10 if not provided
+
+    // Get posts with user and attachments eager loaded
+    $posts = Post::with('user', 'postAttachment')
+                 ->skip($page * $size) // Offset for pagination
+                 ->take($size) // Limit for pagination
+                 ->get();
+
+    // Transform the data to match the desired structure
     $transformedPosts = $posts->map(function ($post) {
         return [
             'id' => $post->id,
@@ -75,7 +97,7 @@ class PostController extends Controller
                 'is_private' => $post->user->is_private,
                 'created_at' => $post->user->created_at,
             ],
-            'Attachment' => $post->postAttachment->map(function ($attachment) {
+            'attachments' => $post->postAttachment->map(function ($attachment) {
                 return [
                     'id' => $attachment->id,
                     'storage_path' => $attachment->storage_path,
@@ -86,9 +108,10 @@ class PostController extends Controller
 
     // Return the transformed data as JSON response
     return response()->json([
-        'page' => 0,
+        'page' => $page,
         'size' => $transformedPosts->count(),
         'posts' => $transformedPosts,
     ]);
-    }
+}
+
 }

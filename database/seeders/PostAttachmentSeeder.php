@@ -22,5 +22,10 @@ class PostAttachmentSeeder extends Seeder
             'storage_path'  => 'gambar2.jpg',
             'post_id'       => 2
         ]);
+
+        PostAttachment::create([
+            'storage_path'  => 'gambar3.jpg',
+            'post_id'       => 3
+        ]);
     }
 }

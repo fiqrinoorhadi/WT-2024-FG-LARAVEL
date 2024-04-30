@@ -28,5 +28,12 @@ class UserSeeder extends Seeder
             'bio'           => 'Saya adalah guru',
             'is_private'    => true
         ]);
+        User::create([
+            'full_name'     => 'Rayhan Wahyudin',
+            'username'      => 'raysan',
+            'password'      => Hash::make('raysan12345'),
+            'bio'           => 'Saya adalah assisten lab',
+            'is_private'    => true
+        ]);
     }
 }
