@@ -14,7 +14,7 @@ class AuthenticationController extends Controller
     {
         $validated = Validator::make($request->all(),[
             'full_name' => 'required',
-            'username'  => 'required|unique:users,username|min:3|alpha_num|regex:/^[a-zA-Z0-9_.]+$/',
+            'username'  => 'required|unique:users,username|min:3|regex:/^[a-zA-Z0-9_.]+$/',
             'password'  => 'required|min:6',
             'bio'       => 'required|max:100',
             'is_private'=> 'boolean'

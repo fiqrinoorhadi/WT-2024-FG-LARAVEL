@@ -15,6 +15,27 @@ class FollowSeeder extends Seeder
     {
         Follow::create([
             'follower_id'   => 1,
+            'following_id'   => 2,
+            'is_accepted'   => true
+        ]);
+        Follow::create([
+            'follower_id'   => 1,
+            'following_id'   => 3
+        ]);
+        Follow::create([
+            'follower_id'   => 2,
+            'following_id'   => 1
+        ]);
+        Follow::create([
+            'follower_id'   => 2,
+            'following_id'   => 3
+        ]);
+        Follow::create([
+            'follower_id'   => 3,
+            'following_id'   => 1
+        ]);
+        Follow::create([
+            'follower_id'   => 3,
             'following_id'   => 2
         ]);
     }

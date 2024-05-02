@@ -15,6 +15,7 @@ Route::post('/v1/posts',[PostController::class, 'store'])->middleware(['auth:san
 Route::delete('/v1/posts/:id',[PostController::class, 'destroy'])->middleware(['auth:sanctum', 'pemilik-postingan']);
 Route::get('/v1/posts',[PostController::class, 'index'])->middleware(['auth:sanctum']);
 
-Route::post('/v1/users/{username}/follow',[FollowController::class, 'index'])->middleware(['auth:sanctum']);
+Route::post('/v1/users/{username}/follow',[FollowController::class, 'follow'])->middleware(['auth:sanctum']);
+Route::delete('/v1/users/{username}/unfolow',[FollowController::class, 'unfollow'])->middleware(['auth:sanctum']);
 
 
