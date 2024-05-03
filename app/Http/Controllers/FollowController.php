@@ -11,45 +11,46 @@ class FollowController extends Controller
 {
     public function follow($username)
     {
-        //select tabel user where username dari api route / data akun yang mau di follow
+        //SELECT tabel users WHERE kolom username = $username dari route api
         $user = User::where('username',$username)->first();
 
-        //jika tidak ketemu data akun yang mau di follow
+        //jika tidak ada hasil, berarti akun tidak ada sama sekali di facegram
         if (! $user) {
             return response()->json([
                 'message' => 'User not found'
             ], 404);
-        //jika tidak ketemu data akun yang mau di follow, lanjut cek username diri sendiri berdasarkan data login
+            
+        //jika $username yang di akan di follow, sama dengan username akun yg sedang kita login
         }elseif(Auth::user()->username == $username){
             return response()->json([
                 'message' => 'You are not allowed to follow yourself'
             ], 422);
-        //selain kondisi if diatas, berarti data akun yang mau di follow
+
+        //selain kondisi if diatas, berarti SELECT tabel user WHERE kolom username = $username ada hasil
         }else{
-            //jika data akun yang mau di follow 
-            //lalu cek data id login kita dengan data id user yang berdasarkan akun yg ingin kita follow sebelumnya, 
-            //cek di tabel follow
+
+            //lalu SELECT tabel follow WHERE kolom follower_id = Auth::user()->id DAN kolom following_id = $user->id
             $follow = Follow::where('follower_id', Auth::user()->id)->where('following_id', $user->id)->first();
 
-            // jika ketemu datanya di tabel follow,
+            // jika ada hasil, berarti kita sudah memfollow akun tersebut
             if ($follow) {
-                //jika ketemu datanya di tabel follow, lalu buatkan variabel $status berdasarkan kondisi dibawah ini
+
+                //lalu buatkan variabel $status berdasarkan kondisi dibawah ini
                 if ($follow->is_accepted == false) {
                     $status = 'requested';
                 }else{
                     $status = 'following';
                 }
 
-                //kembalikan hasilnya dalam bentuk jeson
                 return response()->json([
                     'message' => 'You are already followed',
-                    'status' => $status // or 'requested'
+                    'status' => $status // 'following' | 'requested'
                 ], 422);
             
-            //jika tidak ketemu datanya di tabel follow, user yg sedang login bisa follow username yg dari route api
+            //jika tidak ketemu datanya di tabel follow, user yg sedang login bisa memfollow $username yg dari route api
             //dan data masuk ke tabel follow
             }else{
-                // isi variabel $status berdasarkan kondisi akun nya privat atau tidak berdasarkan akun yg mau di follow
+                // isi variabel $status berdasarkan kondisi akun nya private atau tidak berdasarkan akun yg mau di follow
                 if ($user->is_private == true) {
                     $status = 'requested';
                 }else{
@@ -74,22 +75,29 @@ class FollowController extends Controller
 
     public function unfollow($username)
     {
+        //SELECT tabel users WHERE kolom username = $username dari route api
         $user = User::where('username',$username)->first();
 
-        //jika tidak ketemu data akun yang mau di follow
+        //jika tidak ada hasil, berarti akun tidak ada sama sekali di facegram
         if (! $user) {
             return response()->json([
                 'message' => 'User not found'
             ], 404);
+        
+        //selain kondisi if diatas, berarti SELECT tabel users WHERE kolom username = $username ada hasil
         }else{
+
+            //SELECT tabel follow WHERE kolom follower_id = Auth::user()->id dan kolom following_id = $user->id
             $follow = Follow::where('follower_id', Auth::user()->id)->where('following_id', $user->id)->first();
 
+            //jika tidak ada hasil, berarti akun login kita tidak memfollow $username yang dari route api
             if (! $follow) {
                 return response()->json([
                     'message' => 'You are not following the user'
                 ], 422);
-            }else{
 
+            //selain kondisi if diatas, kita memfolow $username yang dari route api, dan siap untuk di unfollow atau di hapus
+            }else{
                 $follow->delete();
                 return response()->json([
                     'message' => 'Unfollow success'
@@ -98,14 +106,19 @@ class FollowController extends Controller
         }
     }
 
-    public function index()
+    //menampilkan semua data yang di tabel follow
+    public function following()
     {
-        $follows = Follow::with('userFollowing')->where('follower_id', Auth::user()->id)->get();
+        //SELECT tabel follow wtuh nama relasi di model follow
+        $follows = Follow::with('userFollowing')->get();
 
+        //jika hasilnya kosong, maka
         if ($follows->isEmpty()) {
             return response()->json([
                 'message' => 'User not found'
             ], 404);
+
+        //selain kondisi if diatas, berarti datanya ada, lalu tampilkan 
         }else{
             $transformedFollows = $follows->map(function ($follow) {
                 return [
@@ -123,6 +136,41 @@ class FollowController extends Controller
                 'following' => $transformedFollows
             ], 200);
         }
+    }
+    public function accept($username)
+    {
+        //SELECT tabel users WHERE kolom username =  $username dari api route / data akun yang mau di accept
+        $user = User::where('username',$username)->first();
+
+        //jika tidak hasil
+        if (! $user) {
+            return response()->json([
+                'message' => 'User not found'
+            ], 404);
+
+        //selain kondisi if diatas, berarti data akun nya ada di tabel user
+        }else{
+            //cek di tabel follow  follower_id = Auth::user()->id dan following_id = Auth::user()->id ada di tabel follow
+            $follow = Follow::where('follower_id', Auth::user()->id)->where('following_id', $user->id)->first();
+            if (!$follow) {
+                return response()->json([
+                    'message' => 'The user is not following you'
+                ], 422);
+            }elseif($follow->is_accepted == 1){
+                return response()->json([
+                    'message' => 'Follow request is already accepted'
+                ], 422);
+            }else{
+                $follow->update([
+                    'is_accepted' => 1
+                ]);
+
+                return response()->json([
+                    'message' => 'Follow request accepted'
+                ], 200);
+            }
+        }
+        
         
     }
 }
