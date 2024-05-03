@@ -18,7 +18,8 @@ Route::get('/v1/posts',[PostController::class, 'index'])->middleware(['auth:sanc
 Route::post('/v1/users/{username}/follow',[FollowController::class, 'follow'])->middleware(['auth:sanctum']);
 Route::delete('/v1/users/{username}/unfollow',[FollowController::class, 'unfollow'])->middleware(['auth:sanctum']);
 Route::get('/v1/users/following',[FollowController::class, 'following'])->middleware(['auth:sanctum']);
-
 Route::put('/v1/users/{username}/accept',[FollowController::class, 'accept'])->middleware(['auth:sanctum']);
+Route::get('/v1/users/{username}/followers',[FollowController::class, 'followers'])->middleware(['auth:sanctum']);
+
 
 

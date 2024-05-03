@@ -106,11 +106,11 @@ class FollowController extends Controller
         }
     }
 
-    //menampilkan semua data yang di tabel follow
+    //menampilkan semua data user yang kita follow
     public function following()
     {
         //SELECT tabel follow wtuh nama relasi di model follow
-        $follows = Follow::with('userFollowing')->get();
+        $follows = Follow::with('userFollowing')->where('follower_id', Auth::user()->id)->get();
 
         //jika hasilnya kosong, maka
         if ($follows->isEmpty()) {
@@ -128,7 +128,7 @@ class FollowController extends Controller
                     'bio'           => $follow->userFollowing->bio,
                     'is_private'    => $follow->userFollowing->is_private,
                     'created_at'    => $follow->created_at,
-                    'is_requested' => ($follow->is_accepted == 0) ? 1 : 0,
+                    'is_requested' => ($follow->is_accepted == false) ? true : false,
                 ];
             });
     
@@ -170,7 +170,37 @@ class FollowController extends Controller
                 ], 200);
             }
         }
-        
-        
+    }
+
+    public function followers($username)
+    {
+        $user = User::where('username',$username)->first();
+
+        //jika hasilnya kosong, maka
+        if (! $user) {
+            return response()->json([
+                'message' => 'User not found'
+            ], 404);
+
+        //selain kondisi if diatas, berarti datanya ada, lalu tampilkan 
+        }else{
+            //SELECT tabel follow wtuh nama relasi di model follow
+        $follows = Follow::with('userFollowing')->where('follower_id', $user->id)->get();
+            $transformedFollows = $follows->map(function ($follow) {
+                return [
+                    'id' => $follow->id,
+                    'full_name'     => $follow->userFollowing->full_name,
+                    'username'      => $follow->userFollowing->username,
+                    'bio'           => $follow->userFollowing->bio,
+                    'is_private'    => $follow->userFollowing->is_private,
+                    'created_at'    => $follow->created_at,
+                    'is_requested' => ($follow->is_accepted == false) ? true : false,
+                ];
+            });
+    
+            return response()->json([
+                'following' => $transformedFollows
+            ], 200);
+        }
     }
 }
